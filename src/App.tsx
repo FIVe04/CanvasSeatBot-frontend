@@ -1,33 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 declare global {
   interface Window {
-    Telegram: any;
+    Telegram?: any;
   }
 }
 
-const tg = window.Telegram?.WebApp;
-
 const App: React.FC = () => {
-  const [user, setUser] = useState<any>(null);
+  const [tg, setTg] = useState<any>(null);
 
   useEffect(() => {
-    if (tg) {
-      tg.ready(); 
-      setUser(tg.initDataUnsafe?.user);
+    if (window.Telegram && window.Telegram.WebApp) {
+      setTg(window.Telegram.WebApp);
+      window.Telegram.WebApp.ready();
+      console.log("Telegram WebApp detected", window.Telegram.WebApp);
     }
   }, []);
 
-  const sendMessage = () => {
-    console.log('sent');
-  };
-
-  if (!tg) return <div>Это не Telegram WebApp</div>;
+  if (!tg) return <div>Ожидание Telegram Web App...</div>;
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Привет, {user?.first_name || 'Гость'}!</h1>
-      <button onClick={sendMessage}>Отправить сообщение бэкенду</button>
+    <div>
+      <h1>Привет из Telegram WebApp!</h1>
+      <p>Платформа: {tg.platform}</p>
     </div>
   );
 };
